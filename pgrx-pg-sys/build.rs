@@ -1053,18 +1053,5 @@ fn apply_pg_guard(items: &Vec<syn::Item>) -> eyre::Result<proc_macro2::TokenStre
 fn rust_fmt(path: &PathBuf) -> eyre::Result<()> {
     // We shouldn't hit this path in a case where we care about it, but... just
     // in case we probably should respect RUSTFMT.
-    let rustfmt = env_tracked("RUSTFMT").unwrap_or_else(|| "rustfmt".into());
-    let out = run_command(Command::new(rustfmt).arg(path).current_dir("."), "[bindings_diff]");
-    match out {
-        Ok(_) => Ok(()),
-        Err(e)
-            if e.downcast_ref::<std::io::Error>()
-                .ok_or(eyre!("Couldn't downcast error ref"))?
-                .kind()
-                == std::io::ErrorKind::NotFound =>
-        {
-            Err(e).wrap_err("Failed to run `rustfmt`, is it installed?")
-        }
-        Err(e) => Err(e.into()),
-    }
+    Ok(())
 }
